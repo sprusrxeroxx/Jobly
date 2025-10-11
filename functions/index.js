@@ -1,55 +1,15 @@
 import { https } from 'firebase-functions';
-
-// 1. Initialize API Configuration and Prompts
+import fetchWithTimeout from './helpers/fetchWithTimeout.js';
+import { 
+  GENERATOR_SYSTEM_INSTRUCTION, 
+  DISCRIMINATOR_SYSTEM_INSTRUCTION, 
+  DISCRIMINATOR_SCHEMA,
+  GENERATOR_REVISION_INSTRUCTION
+} from './helpers/prompts.js';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = "gemini-2.5-flash-preview-05-20";
-const MAX_ITERATIONS = 3;
-
-// Helper function to add timeout to fetch calls :: FIX SOCKET HANGING ISSUE
-async function fetchWithTimeout(url, options = {}, timeoutMs = 20000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const response = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return response;
-  } catch (err) {
-    clearTimeout(id);
-    // normalize AbortError message
-    if (err.name === 'AbortError') {
-      throw new Error(`Request timed out after ${timeoutMs}ms`);
-    }
-    throw err;
-  }
-}
-
-// --- System Instructions and Prompts ---
-
-// 1a. Generator's primary role and initial instruction
-const GENERATOR_SYSTEM_INSTRUCTION = "You are a world-class resume writer and optimizer. Your goal is to create the best resume possible, perfectly matching the job description. Do NOT include any commentary, analysis, or introductory text. Output ONLY the raw, complete, optimized resume text.";
-
-const DISCRIMINATOR_SYSTEM_INSTRUCTION = (jobDescription) => 
-    `ACT AS A STRICT APPLICANT TRACKING SYSTEM (ATS). Your goal is to find reasons to reject the resume and suggest technical, actionable improvements. Analyze the resume against this job description: '${jobDescription}'. Output ONLY a JSON object.`;
-
-const DISCRIMINATOR_SCHEMA = {
-    type: "OBJECT",
-    properties: {
-        status: { type: "STRING", description: "Must be 'PASS' if the resume is flawless, or 'FAIL' otherwise." },
-        reasons: {
-            type: "ARRAY",
-            items: { type: "STRING" },
-            description: "If status is 'FAIL', list 3 specific, actionable technical reasons for rejection."
-        },
-        suggested_rewrite: {
-            type: "STRING",
-            description: "If status is 'FAIL', provide a brief paragraph of text that should be incorporated into the resume to fix the issues, or a rephrased section. Only include raw text intended for the resume."
-        }
-    },
-    required: ["status", "reasons", "suggested_rewrite"]
-};
-
-const GENERATOR_REVISION_INSTRUCTION = "You are the Generator. The previous draft was rejected by the ATS (Discriminator). You MUST incorporate the 'suggested_rewrite' text and address all 'reasons' for rejection to create a new, improved resume draft. Output ONLY the complete, new, optimized resume text (no commentary).";
+const GEMINI_MODEL = "gemini-2.0-flash";
+const MAX_ITERATIONS = 2;
 
 
 // --- Core API Interaction Logic ---
@@ -58,44 +18,45 @@ async function callGeminiApi(systemInstruction, userQuery, structureSchema = nul
   if (!GEMINI_API_KEY) {
     throw new Error("Gemini API Key not configured. Set GEMINI_API_KEY env variable before starting emulator.");
   }
-
+  
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-
+  
   const payload = {
     contents: [{ parts: [{ text: userQuery }] }],
-    systemInstruction: { parts: [{ text: systemInstruction }] }, // Generator or Discriminator role
-    temperature: 0.2,
-    maxOutputTokens: 1024,
+    systemInstruction: { parts: [{ text: systemInstruction }] },
+    generationConfig: {
+      temperature: 0.1,  // ↓ From 0.3 to 0.1 for strict adherence
+      maxOutputTokens: 3000,
+      topP: 0.3,         // ↓ More restrictive
+      topK: 20           // ↓ More deterministic
+    }
   };
-
+  
   if (structureSchema) {
     payload.generationConfig = {
+      ...payload.generationConfig,
       responseMimeType: "application/json",
       responseSchema: structureSchema
     };
   }
-
+  
   // Simple exponential backoff (3 tries)
   for (let i = 0; i < 3; i++) {
     try {
       console.log(`Calling Gemini (attempt ${i+1}) url=${url}`);
-      // use fetchWithTimeout to fix hanging issue
       const response = await fetchWithTimeout(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-      }, 20000); // 20s per-call timeout
-
-      // Helpful API Status logging
+      }, 20000);
+      
       console.log(`Gemini response status: ${response.status}`);
-
+      
       if (response.ok) {
         const result = await response.json();
-        // safe defensive checks
         if (result?.candidates?.[0]?.content?.parts?.[0]?.text) {
           return result.candidates[0].content.parts[0].text;
         } else {
-          // unexpected shape
           console.log("Unexpected Gemini response shape:", JSON.stringify(result).slice(0, 2000));
           throw new Error("Unexpected Gemini response shape.");
         }
@@ -114,32 +75,32 @@ async function callGeminiApi(systemInstruction, userQuery, structureSchema = nul
       if (i === 2) {
         throw e;
       }
-      // small backoff before retry
       await new Promise(r => setTimeout(r, 500 * (i + 1)));
     }
   }
   throw new Error("Gemini API call failed after multiple retries.");
 }
 
-
-async function runAdversarialOptimization(resumeText, jobDescription) {
-    let currentResume = resumeText;
-    const feedbackHistory = [];
-    let status = 'FAIL';
-
-    // 1. GENERATOR: Create the initial optimized draft
-    const initialQuery = `USER RESUME:\n---\n${resumeText}\n---\nJOB DESCRIPTION:\n---\n${jobDescription}\n---`;
-    try {
-        currentResume = await callGeminiApi(GENERATOR_SYSTEM_INSTRUCTION, initialQuery);
-    } catch (e) {
-        return { success: false, error: `Initial generation failed: ${e.message}`, finalResume: currentResume };
-    }
-
-    // 2. ADVERSARIAL LOOP
-    for (let i = 0; i < MAX_ITERATIONS; i++) {
+async function runAdversarialOptimization(resume, job_description) {
+  let currentResume = resume;
+  console.log(`Original Resume: ${resume}`);
+  console.log(`Job Description: ${job_description}`);
+  const feedbackHistory = [];
+  let status = 'FAIL';
+  
+  // 1. GENERATOR: Create the initial optimized draft with original grounding
+  const initialQuery = `ORIGINAL USER RESUME:\n---\n${resume}\n---\nJOB DESCRIPTION:\n---\n${job_description}\n---\n\nRemember: Only work with the skills and experiences from the ORIGINAL RESUME above.`;
+  try {
+    currentResume = await callGeminiApi(GENERATOR_SYSTEM_INSTRUCTION, initialQuery);
+  } catch (e) {
+    return { success: false, error: `Initial generation failed: ${e.message}`, finalResume: currentResume };
+  }
+  
+  // 2. ADVERSARIAL LOOP
+  for (let i = 0; i < MAX_ITERATIONS; i++) {
         // DISCRIMINATOR: Critique the current resume
         const critiqueQuery = `CURRENT RESUME DRAFT:\n---\n${currentResume}\n---`;
-        const discriminatorSystem = DISCRIMINATOR_SYSTEM_INSTRUCTION(jobDescription);
+        const discriminatorSystem = DISCRIMINATOR_SYSTEM_INSTRUCTION(job_description);
 
         let critiqueJsonText;
         try {
@@ -164,18 +125,22 @@ async function runAdversarialOptimization(resumeText, jobDescription) {
             break;
         }
 
-        // GENERATOR: Update the resume based on critique
+        // GENERATOR: Update the resume based on critique WITH ORIGINAL RESUME FOR GROUNDING
         const revisionQuery = (
+            `ORIGINAL USER RESUME (GROUND TRUTH):\n---\n${resume}\n---\n` +
             `PREVIOUS RESUME DRAFT:\n---\n${currentResume}\n---\n` +
             `DISCRIMINATOR CRITIQUE:\n` +
             `Reasons for rejection: ${critique.reasons.join(', ')}\n` +
-            `Suggested Rewrite: ${critique.suggested_rewrite}`
+            `Suggested Rewrite: ${critique.suggested_rewrite}\n\n` +
+            `REMEMBER: Only use skills and experiences from the ORIGINAL USER RESUME above.`
         );
 
         try {
             currentResume = await callGeminiApi(GENERATOR_REVISION_INSTRUCTION, revisionQuery);
+            console.log(`Reasons for rejection: ${critique.reasons}`);
+            console.log(`Iteration ${i+1} complete. New resume: ${currentResume}`);
         } catch (e) {
-            break; 
+            break;
         }
     }
 
@@ -186,7 +151,6 @@ async function runAdversarialOptimization(resumeText, jobDescription) {
         finalStatus: status,
     };
 }
-
 
 export const optimizeResume = https.onRequest(async (req, res) => {
     // 1. CORS Setup (Crucial for FlutterFlow/Web)
