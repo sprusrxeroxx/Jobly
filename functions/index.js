@@ -1,86 +1,16 @@
 import { https } from 'firebase-functions';
-import fetchWithTimeout from './helpers/fetchWithTimeout.js';
 import { 
   GENERATOR_SYSTEM_INSTRUCTION, 
   DISCRIMINATOR_SYSTEM_INSTRUCTION, 
   DISCRIMINATOR_SCHEMA,
-  GENERATOR_REVISION_INSTRUCTION
-} from './helpers/prompts.js';
+  GENERATOR_REVISION_INSTRUCTION,
+  callGeminiApi
+} from './helpers/AI.js';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = "gemini-2.0-flash";
 const MAX_ITERATIONS = 2;
 
 
-// --- Core API Interaction Logic ---
-
-async function callGeminiApi(systemInstruction, userQuery, structureSchema = null) {
-  if (!GEMINI_API_KEY) {
-    throw new Error("Gemini API Key not configured. Set GEMINI_API_KEY env variable before starting emulator.");
-  }
-  
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-  
-  const payload = {
-    contents: [{ parts: [{ text: userQuery }] }],
-    systemInstruction: { parts: [{ text: systemInstruction }] },
-    generationConfig: {
-      temperature: 0.1,  // ↓ From 0.3 to 0.1 for strict adherence
-      maxOutputTokens: 3000,
-      topP: 0.3,         // ↓ More restrictive
-      topK: 20           // ↓ More deterministic
-    }
-  };
-  
-  if (structureSchema) {
-    payload.generationConfig = {
-      ...payload.generationConfig,
-      responseMimeType: "application/json",
-      responseSchema: structureSchema
-    };
-  }
-  
-  // Simple exponential backoff (3 tries)
-  for (let i = 0; i < 3; i++) {
-    try {
-      console.log(`Calling Gemini (attempt ${i+1}) url=${url}`);
-      const response = await fetchWithTimeout(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }, 20000);
-      
-      console.log(`Gemini response status: ${response.status}`);
-      
-      if (response.ok) {
-        const result = await response.json();
-        if (result?.candidates?.[0]?.content?.parts?.[0]?.text) {
-          return result.candidates[0].content.parts[0].text;
-        } else {
-          console.log("Unexpected Gemini response shape:", JSON.stringify(result).slice(0, 2000));
-          throw new Error("Unexpected Gemini response shape.");
-        }
-      } else if (response.status === 429 && i < 2) {
-        const delay = Math.pow(2, i) * 1000;
-        console.log(`Rate limited. Backing off ${delay}ms`);
-        await new Promise(r => setTimeout(r, delay));
-        continue;
-      } else {
-        const errorBody = await response.text();
-        console.error("Non-ok response from Gemini:", response.status, errorBody);
-        throw new Error(`API failed with status ${response.status}: ${errorBody}`);
-      }
-    } catch (e) {
-      console.error(`Gemini call attempt ${i+1} failed:`, e.message);
-      if (i === 2) {
-        throw e;
-      }
-      await new Promise(r => setTimeout(r, 500 * (i + 1)));
-    }
-  }
-  throw new Error("Gemini API call failed after multiple retries.");
-}
-
+// --- Generative Adversarial Network Logic ---
 async function runAdversarialOptimization(resume, job_description) {
   let currentResume = resume;
   console.log(`Original Resume: ${resume}`);
@@ -153,7 +83,7 @@ async function runAdversarialOptimization(resume, job_description) {
 }
 
 export const optimizeResume = https.onRequest(async (req, res) => {
-    // 1. CORS Setup (Crucial for FlutterFlow/Web)
+    // 1. CORS Setup
     res.set('Access-Control-Allow-Origin', '*');
     if (req.method === 'OPTIONS') {
         res.set('Access-Control-Allow-Methods', 'POST');
@@ -167,7 +97,6 @@ export const optimizeResume = https.onRequest(async (req, res) => {
         return res.status(405).send({ error: 'Method Not Allowed. Use POST.' });
     }
     
-    // Use req.body for POST requests
     const { resume, job_description } = req.body;
 
     if (!resume || !job_description) {
