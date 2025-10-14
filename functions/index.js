@@ -1,33 +1,35 @@
 import { https } from 'firebase-functions';
+import { callGeminiApi, parseResumeToStructuredData } from './helpers/Callbacks.js';
+import { generateMarkdownResume } from './helpers/markdownGenerator.js';
 import { 
   GENERATOR_SYSTEM_INSTRUCTION, 
   DISCRIMINATOR_SYSTEM_INSTRUCTION, 
   DISCRIMINATOR_SCHEMA,
-  GENERATOR_REVISION_INSTRUCTION,
-  callGeminiApi
-} from './helpers/AI.js';
+  GENERATOR_REVISION_INSTRUCTION
+} from './helpers/prompts.js';
+
 
 const MAX_ITERATIONS = 2;
 
 
 // --- Generative Adversarial Network Logic ---
 async function runAdversarialOptimization(resume, job_description) {
-  let currentResume = resume;
-  console.log(`Original Resume: ${resume}`);
-  console.log(`Job Description: ${job_description}`);
-  const feedbackHistory = [];
-  let status = 'FAIL';
-  
-  // 1. GENERATOR: Create the initial optimized draft with original grounding
-  const initialQuery = `ORIGINAL USER RESUME:\n---\n${resume}\n---\nJOB DESCRIPTION:\n---\n${job_description}\n---\n\nRemember: Only work with the skills and experiences from the ORIGINAL RESUME above.`;
-  try {
-    currentResume = await callGeminiApi(GENERATOR_SYSTEM_INSTRUCTION, initialQuery);
-  } catch (e) {
-    return { success: false, error: `Initial generation failed: ${e.message}`, finalResume: currentResume };
-  }
-  
-  // 2. ADVERSARIAL LOOP
-  for (let i = 0; i < MAX_ITERATIONS; i++) {
+    let currentResume = resume;
+    console.log(`Original Resume: ${resume}`);
+    console.log(`Job Description: ${job_description}`);
+    const feedbackHistory = [];
+    let status = 'FAIL';
+    
+    // 1. GENERATOR: Create the initial optimized draft with original grounding
+    const initialQuery = `ORIGINAL USER RESUME:\n---\n${resume}\n---\nJOB DESCRIPTION:\n---\n${job_description}\n---\n\nRemember: Only work with the skills and experiences from the ORIGINAL RESUME above.`;
+    try {
+        currentResume = await callGeminiApi(GENERATOR_SYSTEM_INSTRUCTION, initialQuery);
+    } catch (e) {
+        return { success: false, error: `Initial generation failed: ${e.message}`, finalResume: currentResume };
+    }
+    
+    // 2. ADVERSARIAL LOOP
+    for (let i = 0; i < MAX_ITERATIONS; i++) {
         // DISCRIMINATOR: Critique the current resume
         const critiqueQuery = `CURRENT RESUME DRAFT:\n---\n${currentResume}\n---`;
         const discriminatorSystem = DISCRIMINATOR_SYSTEM_INSTRUCTION(job_description);
@@ -68,17 +70,22 @@ async function runAdversarialOptimization(resume, job_description) {
         try {
             currentResume = await callGeminiApi(GENERATOR_REVISION_INSTRUCTION, revisionQuery);
             console.log(`Reasons for rejection: ${critique.reasons}`);
-            console.log(`Iteration ${i+1} complete. New resume: ${currentResume}`);
+            console.log(`Iteration ${i+1} complete.`);
         } catch (e) {
             break;
         }
     }
 
+    // 3. PARSE THE FINAL RESUME INTO STRUCTURED DATA
+    console.log('Optimization complete, starting resume parsing...');
+    const structuredData = await parseResumeToStructuredData(currentResume);
+
     return {
         success: true,
         finalResume: currentResume,
+        structuredData: structuredData,
+        markdownResume: generateMarkdownResume(structuredData),
         feedbackHistory: feedbackHistory,
-        finalStatus: status,
     };
 }
 
