@@ -1,12 +1,12 @@
 import { https } from 'firebase-functions';
 import { callGeminiApi, parseResumeToStructuredData } from './helpers/Callbacks.js';
-import { generateMarkdownResume } from './helpers/markdownGenerator.js';
 import { 
   GENERATOR_SYSTEM_INSTRUCTION, 
   DISCRIMINATOR_SYSTEM_INSTRUCTION, 
   DISCRIMINATOR_SCHEMA,
   GENERATOR_REVISION_INSTRUCTION
 } from './helpers/prompts.js';
+import generateHTMLResume from './helpers/generateHTML.js';
 
 
 const MAX_ITERATIONS = 2;
@@ -82,10 +82,11 @@ async function runAdversarialOptimization(resume, job_description) {
 
     return {
         success: true,
-        finalResume: currentResume,
         structuredData: structuredData,
-        markdownResume: generateMarkdownResume(structuredData),
+        htmlResume: generateHTMLResume(structuredData),
         feedbackHistory: feedbackHistory,
+        originalResume: resume,
+        jobDescription: job_description,
     };
 }
 
