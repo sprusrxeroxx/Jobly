@@ -15,13 +15,12 @@ class ImproveResumeCall {
   }) async {
     final ffApiRequestBody = '''
 {
-  "resume": "{{resume}}",
-  "job_description": "{{job_description}}"
+  "resume": "${escapeStringForJson(resume)}",
+  "job_description": "${escapeStringForJson(jobDescription)}"
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'ImproveResume',
-      apiUrl:
-          'https://orange-system-pvj65qwjgqhrv5g-5001.app.github.dev/jobly-1f019/us-central1/optimizeResume',
+      apiUrl: 'https://optimizeresume-mo5agvrota-uc.a.run.app',
       callType: ApiCallType.POST,
       headers: {
         'Content-Type': 'application/json',
@@ -43,6 +42,156 @@ class ImproveResumeCall {
         response,
         r'''$.finalResume''',
       ));
+  static dynamic structuredResume(dynamic response) => getJsonField(
+        response,
+        r'''$.structuredData''',
+      );
+  static String? htmlResume(dynamic response) =>
+      castToType<String>(getJsonField(
+        response,
+        r'''$.htmlResume''',
+      ));
+  static List<String>? feedback(dynamic response) => (getJsonField(
+        response,
+        r'''$.feedbackHistory[1].critique.reasons''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
+}
+
+class SearchJobCall {
+  static Future<ApiCallResponse> call({
+    String? query = '\"Sofware development jobs in johannesburg\"',
+    int? page = 1,
+    String? country = 'za',
+    String? datePosted = 'all',
+  }) async {
+    return ApiManager.instance.makeApiCall(
+      callName: 'searchJob',
+      apiUrl: 'https://jsearch.p.rapidapi.com/search',
+      callType: ApiCallType.GET,
+      headers: {
+        'x-rapidapi-host': 'jsearch.p.rapidapi.com',
+        'x-rapidapi-key': '96fdf06805msheb1cf0f12afc764p15e6b4jsndf1efd54406a',
+      },
+      params: {
+        'query': query,
+        'page': page,
+        'country': country,
+        'date_posted': datePosted,
+      },
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+
+  static List? jobListings(dynamic response) => getJsonField(
+        response,
+        r'''$.data[:]''',
+        true,
+      ) as List?;
+  static List<String>? jobTitle(dynamic response) => (getJsonField(
+        response,
+        r'''$.data[:].job_title''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
+  static List<String>? employerLogo(dynamic response) => (getJsonField(
+        response,
+        r'''$.data[:].employer_logo''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
+  static List<String>? employerName(dynamic response) => (getJsonField(
+        response,
+        r'''$.data[:].employer_name''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
+  static List<String>? employerWebSite(dynamic response) => (getJsonField(
+        response,
+        r'''$.data[:].employer_website''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
+  static List<String>? jobApplyLink(dynamic response) => (getJsonField(
+        response,
+        r'''$.data[:].job_apply_link''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
+  static List? applyOptions(dynamic response) => getJsonField(
+        response,
+        r'''$.data[:].apply_options''',
+        true,
+      ) as List?;
+  static List<String>? jobDescription(dynamic response) => (getJsonField(
+        response,
+        r'''$.data[:].job_description''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
+  static List<String>? jobPostedAtUTC(dynamic response) => (getJsonField(
+        response,
+        r'''$.data[:].job_posted_at_datetime_utc''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
+  static List<String>? jobLocation(dynamic response) => (getJsonField(
+        response,
+        r'''$.data[:].job_location''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
+  static List<String>? jobEmploymentType(dynamic response) => (getJsonField(
+        response,
+        r'''$.data[:].job_employment_type''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
+  static List<String>? jobPostedAt(dynamic response) => (getJsonField(
+        response,
+        r'''$.data[:].job_posted_at''',
+        true,
+      ) as List?)
+          ?.withoutNulls
+          .map((x) => castToType<String>(x))
+          .withoutNulls
+          .toList();
 }
 
 class ApiPagingParams {
@@ -62,6 +211,9 @@ class ApiPagingParams {
 }
 
 String _toEncodable(dynamic item) {
+  if (item is DocumentReference) {
+    return item.path;
+  }
   return item;
 }
 
