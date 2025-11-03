@@ -7,6 +7,7 @@ import {
   GENERATOR_REVISION_INSTRUCTION
 } from './helpers/prompts.js';
 import generateHTMLResume from './helpers/generateHTML.js';
+import { generatePdfFromHtml } from './generatePdfFromHtml.js';
 
 
 const MAX_ITERATIONS = 2;
@@ -16,6 +17,7 @@ const MAX_ITERATIONS = 2;
 async function runAdversarialOptimization(resume, job_description) {
     let currentResume = resume;
     console.log(`Original Resume: ${resume}`);
+    
     console.log(`Job Description: ${job_description}`);
     const feedbackHistory = [];
     let status = 'FAIL';
@@ -125,3 +127,5 @@ export const optimizeResume = https.onRequest(async (req, res) => {
         return res.status(500).json({ error: "An internal error occurred during optimization.", details: e.message });
     }
 });
+
+export { generatePdfFromHtml };
