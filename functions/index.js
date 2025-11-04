@@ -7,7 +7,6 @@ import {
   GENERATOR_REVISION_INSTRUCTION
 } from './helpers/prompts.js';
 import generateHTMLResume from './helpers/generateHTML.js';
-import { generatePdfFromHtml } from './generatePdfFromHtml.js';
 
 
 const MAX_ITERATIONS = 2;
@@ -35,7 +34,7 @@ async function runAdversarialOptimization(resume, job_description) {
         // DISCRIMINATOR: Critique the current resume
         const critiqueQuery = `CURRENT RESUME DRAFT:\n---\n${currentResume}\n---`;
         const discriminatorSystem = DISCRIMINATOR_SYSTEM_INSTRUCTION(job_description);
-
+        
         let critiqueJsonText;
         try {
             critiqueJsonText = await callGeminiApi(discriminatorSystem, critiqueQuery, DISCRIMINATOR_SCHEMA);
@@ -43,7 +42,7 @@ async function runAdversarialOptimization(resume, job_description) {
             feedbackHistory.push({ iteration: i + 1, status: "ERROR", message: `Discriminator failed: ${e.message}` });
             break; 
         }
-
+        
         let critique;
         try {
             critique = JSON.parse(critiqueJsonText);
@@ -54,11 +53,11 @@ async function runAdversarialOptimization(resume, job_description) {
         
         status = (critique.status || 'FAIL').toUpperCase();
         feedbackHistory.push({ iteration: i + 1, status: status, critique: critique });
-
+        
         if (status === 'PASS') {
             break;
         }
-
+        
         // GENERATOR: Update the resume based on critique WITH ORIGINAL RESUME FOR GROUNDING
         const revisionQuery = (
             `ORIGINAL USER RESUME (GROUND TRUTH):\n---\n${resume}\n---\n` +
@@ -68,7 +67,7 @@ async function runAdversarialOptimization(resume, job_description) {
             `Suggested Rewrite: ${critique.suggested_rewrite}\n\n` +
             `REMEMBER: Only use skills and experiences from the ORIGINAL USER RESUME above.`
         );
-
+        
         try {
             currentResume = await callGeminiApi(GENERATOR_REVISION_INSTRUCTION, revisionQuery);
             console.log(`Reasons for rejection: ${critique.reasons}`);
@@ -77,11 +76,11 @@ async function runAdversarialOptimization(resume, job_description) {
             break;
         }
     }
-
+    
     // 3. PARSE THE FINAL RESUME INTO STRUCTURED DATA
     console.log('Optimization complete, starting resume parsing...');
     const structuredData = await parseResumeToStructuredData(currentResume);
-
+    
     return {
         success: true,
         structuredData: structuredData,
@@ -101,18 +100,18 @@ export const optimizeResume = https.onRequest(async (req, res) => {
         res.set('Access-Control-Max-Age', '3600');
         return res.status(204).send('');
     }
-
+    
     // 2. Input Validation
     if (req.method !== 'POST') {
         return res.status(405).send({ error: 'Method Not Allowed. Use POST.' });
     }
     
     const { resume, job_description } = req.body;
-
+    
     if (!resume || !job_description) {
         return res.status(400).send({ error: 'Missing required fields: resume and job_description.' });
     }
-
+    
     // 3. Run Optimization
     try {
         const result = await runAdversarialOptimization(resume, job_description);
@@ -128,4 +127,4 @@ export const optimizeResume = https.onRequest(async (req, res) => {
     }
 });
 
-export { generatePdfFromHtml };
+export { generatePdfFromHtml } from './generatePdfFromHtml.js';
