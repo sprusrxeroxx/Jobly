@@ -1,13 +1,9 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-
-admin.initializeApp();
 
 const CRAFT_URL = 'https://api.craftmypdf.com/v1/generate'; // <-- placeholder, replace if needed
 const SIGNED_URL_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 export const generatePdfFromHtml = functions
-  .runWith({ timeoutSeconds: 300, memory: '512MB' })
   .https.onCall(async (data, context) => {
     if (!context.auth || !context.auth.uid) {
       throw new functions.https.HttpsError('unauthenticated', 'Must be signed in to call this function.');
