@@ -67,11 +67,11 @@ function generateHeader(contact_info) {
   if (contact_info.email) items.push(`<span class="contact-item">${escapeHtml(contact_info.email)}</span>`);
   if (contact_info.phone_numbers?.length) items.push(`<span class="contact-item">${escapeHtml(contact_info.phone_numbers[0])}</span>`);
   if (contact_info.location) items.push(`<span class="contact-item">${escapeHtml(contact_info.location)}</span>`);
-  if (contact_info.linkedin) items.push(`<a class="contact-item" href="${escapeHtml(contact_info.linkedin)}">LinkedIn</a>`);
-  if (contact_info.portfolio) items.push(`<a class="contact-item" href="${escapeHtml(contact_info.portfolio)}">Portfolio</a>`);
+  if (contact_info.linkedin) items.push(`<span class="contact-item">${escapeHtml(contact_info.linkedin)}</span>`);
+  if (contact_info.portfolio) items.push(`<span class="contact-item">${escapeHtml(contact_info.portfolio)}</span>`);
 
   return `<div class="header">
-    ${contact_info.name ? `<div class="name">${escapeHtml(contact_info.name)}</div>` : ''}
+    ${contact_info.name ? `<div class="name">${escapeHtml(contact_info.name)} ${escapeHtml(contact_info.surname)}</div>` : ''}
     ${items.length ? `<div class="contact-info">${items.join('')}</div>` : ''}
   </div>`;
 }
@@ -89,7 +89,7 @@ function generateExperience(experience) {
         <div class="item-title">${escapeHtml(exp.role || '')}</div>
         <div class="item-dates">${escapeHtml(exp.start_date || '')}${exp.end_date ? ' - ' + escapeHtml(exp.end_date) : ''}</div>
       </div>
-      <div class="item-subtitle">${escapeHtml(exp.company_name || '')}${exp.location ? ' • ' + escapeHtml(exp.location) : ''}</div>
+      <div class="item-subtitle">${escapeHtml(exp.company_name || '')}</div>
       ${exp.description ? `<div class="item-description">${escapeHtml(exp.description)}</div>` : ''}
     </div>
   `).join('');
@@ -109,7 +109,7 @@ function generateEducation(education) {
         <div class="item-title">${escapeHtml(edu.degree || '')}${edu.field_of_study ? ' in ' + escapeHtml(edu.field_of_study) : ''}</div>
         <div class="item-dates">${escapeHtml(edu.end_date || '')}</div>
       </div>
-      <div class="item-subtitle">${escapeHtml(edu.institution || '')}${edu.location ? ' • ' + escapeHtml(edu.location) : ''}${edu.gpa ? ' • GPA: ' + escapeHtml(edu.gpa) : ''}</div>
+      <div class="item-subtitle">${escapeHtml(edu.institution || '')}${(edu.location !== null) ? ' • ' + escapeHtml(edu.location) : ''}</div>
     </div>
   `).join('');
   return `<div class="section"><h2 class="section-title">Education</h2>${items}</div>`;
@@ -121,7 +121,6 @@ function generateProjects(projects) {
     <div class="project-item">
       <div class="item-header">
         <div class="item-title">${escapeHtml(p.name || '')}</div>
-        ${p.start_date ? `<div class="item-dates">${escapeHtml(p.start_date)}${p.end_date ? ' - ' + escapeHtml(p.end_date) : ''}</div>` : ''}
       </div>
       ${p.description ? `<div class="item-description">${escapeHtml(p.description)}</div>` : ''}
       ${p.technologies?.length ? `<div class="skills-list" style="margin-top:8px;">${p.technologies.map(t => `<span class="skill-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
@@ -132,7 +131,7 @@ function generateProjects(projects) {
 
 function generateCertifications(certifications) {
   if (!certifications || !certifications.length) return '';
-  return `<div class="section"><h2 class="section-title">Certifications</h2>${certifications.map(c => `<div class="certification-item"><strong>${escapeHtml(c.name)}</strong> - ${escapeHtml(c.issuer || '')}${c.date_obtained ? ` (${escapeHtml(c.date_obtained)})` : ''}</div>`).join('')}</div>`;
+  return `<div class="section"><h2 class="section-title">Certifications</h2>${certifications.map(c => `<div class="certification-item"><strong>${escapeHtml(c.name)}</strong></div>`).join('')}</div>`;
 }
 
 function generateLanguages(languages) {
