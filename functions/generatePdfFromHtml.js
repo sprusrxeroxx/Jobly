@@ -1,14 +1,19 @@
 import * as functions from 'firebase-functions';
+// import admin from "firebase-admin";
 
-const CRAFT_URL = 'https://api.craftmypdf.com/v1/generate'; // <-- placeholder, replace if needed
+// admin.initializeApp();
+
+const CRAFT_URL =  "https://api.craftmypdf.com/v1/create";
 const SIGNED_URL_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 export const generatePdfFromHtml = functions
   .https.onCall(async (data, context) => {
     if (!context.auth || !context.auth.uid) {
+      console.log('generatePdfFromHtml called unauthenticated. context.auth =', context.auth);
       throw new functions.https.HttpsError('unauthenticated', 'Must be signed in to call this function.');
     }
     const uid = context.auth.uid;
+    console.log('generatePdfFromHtml called by uid:', uid);
     const html = typeof data?.html === 'string' ? data.html : null;
     const filenameRaw = typeof data?.filename === 'string' && data.filename.trim() ? data.filename.trim() : 'resume.pdf';
 
@@ -17,7 +22,7 @@ export const generatePdfFromHtml = functions
     }
 
     // Get API key from functions config
-    const craftKey = functions.config()?.craftmypdf?.key || process.env.CRAFTMYPDF_KEY;
+    const craftKey = process.env.CRAFTMYPDF_KEY;
     if (!craftKey) {
       throw new functions.https.HttpsError('failed-precondition', 'Server missing PDF provider key.');
     }
