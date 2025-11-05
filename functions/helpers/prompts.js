@@ -161,7 +161,7 @@ export const RESUME_PARSER_SCHEMA = {
         languages: {
             type: "ARRAY",
             items: { type: "STRING" },
-            description: "Array of languages mentioned, empty array if none"
+            description: "Array of spoken languages mentioned, empty array if none"
         }
     },
     required: ["contact_info", "summary", "experience", "skills", "education", "projects", "certifications", "languages"]
