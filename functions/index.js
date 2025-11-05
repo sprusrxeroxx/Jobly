@@ -8,7 +8,8 @@ import {
 } from './helpers/prompts.js';
 import generateHTMLResume from './helpers/generateHTML.js';
 
-import * as admin from 'firebase-admin';
+import admin from "firebase-admin";
+
 admin.initializeApp();
 
 
