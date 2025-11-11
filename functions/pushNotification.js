@@ -1,10 +1,6 @@
-// Push Notifications Function
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+import { auth } from 'firebase-functions';
 
-admin.initializeApp();
-
-exports.sendWelcomePush = functions.auth.user().onCreate(async (user) => {
+exports.sendWelcomePush = auth.user().onCreate(async (user) => {
   const uid = user.uid;
   try {
     const userDoc = await admin.firestore().collection('users').doc(uid).get();
@@ -22,7 +18,7 @@ exports.sendWelcomePush = functions.auth.user().onCreate(async (user) => {
         body: 'Thanks for signing up — tap to get started!'
       },
       data: {
-        screen: 'welcome', // optional: custom data to route user in app
+        screen: 'Dashboard', // optional: custom data to route user in app
         uid: uid
       }
     };
