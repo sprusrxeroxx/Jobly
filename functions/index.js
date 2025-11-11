@@ -1,4 +1,6 @@
 import { https } from 'firebase-functions';
+import admin from "firebase-admin";
+import generateHTMLResume from './helpers/generateHTML.js';
 import { callGeminiApi, parseResumeToStructuredData } from './helpers/Callbacks.js';
 import { 
   GENERATOR_SYSTEM_INSTRUCTION, 
@@ -6,17 +8,11 @@ import {
   DISCRIMINATOR_SCHEMA,
   GENERATOR_REVISION_INSTRUCTION
 } from './helpers/prompts.js';
-import generateHTMLResume from './helpers/generateHTML.js';
-
-import admin from "firebase-admin";
 
 admin.initializeApp();
 
-
 const MAX_ITERATIONS = 2;
 
-
-// --- Generative Adversarial Network Logic ---
 async function runAdversarialOptimization(resume, job_description) {
     let currentResume = resume;
     console.log(`Original Resume: ${resume}`);
