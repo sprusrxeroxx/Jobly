@@ -1,4 +1,5 @@
 import { https } from 'firebase-functions';
+import { PDFParse } from 'pdf-parse';
 import admin from "firebase-admin";
 import generateHTMLResume from './helpers/generateHTML.js';
 import { callGeminiApi, parseResumeToStructuredData } from './helpers/Callbacks.js';
@@ -11,8 +12,9 @@ import {
 
 admin.initializeApp();
 
-const MAX_ITERATIONS = 2;
+const MAX_ITERATIONS = 1;
 
+// Main adversarial optimization function
 async function runAdversarialOptimization(resume, job_description) {
     let currentResume = resume;
     console.log(`Original Resume: ${resume}`);
@@ -91,6 +93,20 @@ async function runAdversarialOptimization(resume, job_description) {
     };
 }
 
+// Helper function to extract text from PDF buffer
+async function extractTextFromPdf(pdfBuffer) {
+    try {
+        const parser = new PDFParse({ data: pdfBuffer });
+        const data = await parser.getText();
+
+        return data.text;
+    } catch (error) {
+        console.error('PDF text extraction failed:', error);
+        throw new Error('Failed to extract text from PDF');
+        }
+    }
+
+// Cloud Function to optimize resume recieved via text using adversarial loop
 export const optimizeResume = https.onRequest(async (req, res) => {
     // 1. CORS Setup
     res.set('Access-Control-Allow-Origin', '*');
@@ -126,5 +142,51 @@ export const optimizeResume = https.onRequest(async (req, res) => {
         return res.status(500).json({ error: "An internal error occurred during optimization.", details: e.message });
     }
 });
+
+// Cloud Function to optimize resume recieved via PDF using adversarial loop
+export const processPdfResume = https.onRequest(async (req, res) => {
+  // CORS setup
+  res.set('Access-Control-Allow-Origin', '*');
+  if (req.method === 'OPTIONS') {
+    res.set('Access-Control-Allow-Methods', 'POST');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Max-Age', '3600');
+    return res.status(204).send('');
+  }
+
+  const { pdfBase64, job_description } = req.body;
+
+  if (!pdfBase64 || !job_description) {
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Missing required fields: pdfBase64 and job_description' 
+    });
+  }
+
+  try {
+    // 1. Convert base64 to buffer
+    const pdfBuffer = Buffer.from(pdfBase64, 'base64');
+    
+    // 2. Extract text from PDF
+    const resumeText = await extractTextFromPdf(pdfBuffer);
+    
+    console.log('Extracted text length:', resumeText.length);
+    
+    // 3. Call optimization function
+    const optimizationResult = await runAdversarialOptimization(resumeText, job_description);
+    
+    // 4. Return the structure as optimizeResume
+    return res.status(200).json(optimizationResult);
+
+  } catch (error) {
+    console.error('PDF processing error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'PDF processing failed',
+      details: error.message
+    });
+  }
+});
+
 
 export { generatePdfFromHtml } from './generatePdfFromHtml.js';
