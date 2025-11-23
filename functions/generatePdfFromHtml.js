@@ -28,9 +28,7 @@ export const generatePdfFromHtml = https.onRequest({ memory: '512GB', timeoutSec
   let browser = null;
   
   try {
-   // Configure Chromium for serverless
     chromium.setGraphicsMode = false;
-    
     browser = await puppeteer.launch({
       args: [
         ...chromium.args,
@@ -56,7 +54,7 @@ export const generatePdfFromHtml = https.onRequest({ memory: '512GB', timeoutSec
     const idToken = req.headers.authorization.split('Bearer ')[1];
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     const uid = decodedToken.uid;
-    const bucket = admin.storage().bucket(); // default bucket
+    const bucket = admin.storage().bucket();
     const safeFilename = fileName.replace(/[\/\\\s]+/g, '_');
     const ts = Date.now();
     const storagePath = `user_uploads/${uid}/${ts}_${safeFilename}`;
@@ -72,8 +70,6 @@ export const generatePdfFromHtml = https.onRequest({ memory: '512GB', timeoutSec
         action: 'read',
         expires: Date.now() + SIGNED_URL_EXPIRY_MS
       });
-
-      // --- Success response ---
       return res.status(200).json({
         success: true,
         storagePath,
