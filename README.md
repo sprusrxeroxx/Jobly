@@ -63,7 +63,9 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-<iframe title="vimeo-player" src="https://player.vimeo.com/video/1153713657?h=2ec1577f58" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>
+<video src="Jobly Workflow (1).mp4" controls title="Video Title">
+  Your browser does not support the video tag.
+</video>
 
 Let's be honest: the modern hiring process is a black box. You spend hours crafting a resume only to have it rejected by an Applicant Tracking System (ATS) before a human ever sees it. Meanwhile, other platforms want you to spend your time "connecting" and posting "humble brags" instead of actually getting work.
 
