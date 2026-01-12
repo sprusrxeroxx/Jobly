@@ -16,7 +16,7 @@
     <img src="jobly Logo.jpg" alt="Jobly Logo" width="200" height="200">
   </a>
 
-<h3 align="center">JOBLY</h3>
+<h3 align="center">Jobly</h3>
 
   <p align="center">
     <strong>The Career Platform That Fights Back.</strong>
