@@ -68,7 +68,7 @@ Let's be honest: the modern hiring process is a black box. You spend hours craft
 
 **Jobly is not a social network.** We don't care about your engagement metrics. We care about your offer letter.
 
-Jobly is a career arsenal designed to beat the bots at their own game. Using a **GAN-inspired (Generative Adversarial Network)** approach, our AI generates multiple iterations of your resume, pitting them against a virtual ATS discriminator until we forge a document that is mathematically optimized to get you an interview.
+Jobly is a career arsenal designed to beat the bots at their own game. Using a **GAN-inspired** approach, our AI generates multiple iterations of your resume, pitting them against a virtual ATS discriminator until we forge a document that is mathematically optimized to get you an interview.
 
 It is a full-stack career platform built for the job seeker who is tired of the status quo.
 
@@ -156,7 +156,7 @@ To get a local copy up and running, follow these steps.
 2.  Paste the URL or description into Jobly.
 3.  Upload your base resume (PDF).
 4.  Hit **"Optimize"**.
-5.  Watch as the Generator (AI Writer) and Discriminator (AI ATS) fight over your resume. The result is a hyper-optimized PDF ready for submission.
+5.  Watch as the Generator and Discriminator fight over your resume. The result is a hyper-optimized PDF ready for submission.
 
 _For more examples, please refer to the [Documentation](https://github.com/sprusrxeroxx/Jobly/wiki)_
 
