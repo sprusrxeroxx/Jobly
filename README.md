@@ -230,7 +230,7 @@ Project Link: [https://github.com/sprusrxeroxx/Jobly](https://github.com/sprusrx
 [license-shield]: https://img.shields.io/github/license/sprusrxeroxx/Jobly.svg?style=for-the-badge
 [license-url]: https://github.com/sprusrxeroxx/Jobly/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
+[linkedin-url]: https://www.linkedin.com/in/ntokozovilakazi-back-end-developer/
 [product-screenshot]: https://via.placeholder.com/600x400.png?text=Jobly+Dashboard+Placeholder
 [Flutter.dev]: https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white
 [Flutter-url]: https://flutter.dev/
