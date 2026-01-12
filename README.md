@@ -63,7 +63,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
+ 
 [![Jobly Screenshot][product-screenshot]](https://jobly.flutterflow.app/)
 
 Let's be honest: the modern hiring process is a black box. You spend hours crafting a resume only to have it rejected by an Applicant Tracking System (ATS) before a human ever sees it. Meanwhile, other platforms want you to spend your time "connecting" and posting "humble brags" instead of actually getting work.
