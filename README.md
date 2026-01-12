@@ -77,7 +77,7 @@ It is a full-stack career platform built for the job seeker who is tired of the 
 This project is built using a robust, scalable tech stack designed for performance and real-time capability.
 
 * [![Flutter][Flutter.dev]][Flutter-url] - **Frontend**: Cross-platform native performance.
-* [![Firebase][Firebase.com]][Firebase-url] - **Backend**: Auth, Firestore, Cloud Functions, and Hosting.
+* [![Firebase][Firebase.com]][Firebase-url] - **Backend**: Auth, Firestore, Cloud Functions, and Storage.
 * [![Google Gemini][Gemini.google]][Gemini-url] - **AI Core**: Powering the adversarial generation and analysis.
 * [![Node][Node.js]][Node-url] - **Cloud Functions**: Serverless compute for resume processing.
 
