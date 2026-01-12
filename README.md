@@ -13,7 +13,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/sprusrxeroxx/Jobly">
-    <img src="path/to/your/logo.png" alt="Jobly Logo" width="120" height="120">
+    <img src="jobly Logo.jpg" alt="Jobly Logo" width="200" height="200">
   </a>
 
 <h3 align="center">JOBLY</h3>
@@ -205,7 +205,7 @@ Contributions are what make the open source community such an amazing place to l
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the Apache2.0 License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -230,7 +230,7 @@ Project Link: [https://github.com/sprusrxeroxx/Jobly](https://github.com/sprusrx
 [license-shield]: https://img.shields.io/github/license/sprusrxeroxx/Jobly.svg?style=for-the-badge
 [license-url]: https://github.com/sprusrxeroxx/Jobly/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
+[linkedin-url]: https://www.linkedin.com/in/ntokozovilakazi-back-end-developer/
 [product-screenshot]: https://via.placeholder.com/600x400.png?text=Jobly+Dashboard+Placeholder
 [Flutter.dev]: https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white
 [Flutter-url]: https://flutter.dev/
