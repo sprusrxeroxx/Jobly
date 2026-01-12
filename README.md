@@ -24,7 +24,7 @@
     Job hunting is broken. The system is rigged by ATS bots and "social" networks that care more about engagement than your employment. Jobly rigs it back in your favor.
     <br />
     <br />
-    <a href="https://jobly-demo-link.com"><strong>View Live Demo »</strong></a>
+    <a href="https://jobly.flutterflow.app/"><strong>View Live Demo »</strong></a>
     <br />
     <br />
     <a href="https://github.com/sprusrxeroxx/Jobly/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
@@ -63,9 +63,6 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-<video src="Jobly Workflow (1).mp4" controls title="Video Title">
-  Your browser does not support the video tag.
-</video>
 
 Let's be honest: the modern hiring process is a black box. You spend hours crafting a resume only to have it rejected by an Applicant Tracking System (ATS) before a human ever sees it. Meanwhile, other platforms want you to spend your time "connecting" and posting "humble brags" instead of actually getting work.
 
