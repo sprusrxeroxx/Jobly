@@ -13,7 +13,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/sprusrxeroxx/Jobly">
-    <img src="jobly Logo.jpg" alt="Jobly Logo" width="200" height="200">
+    <img src="jobly Logo.jpg" alt="Jobly Logo" width="150" height="150">
   </a>
 
 <h3 align="center">JOBLY</h3>
