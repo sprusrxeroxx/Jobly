@@ -63,8 +63,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
- 
-[![Jobly Screenshot][product-screenshot]](https://jobly.flutterflow.app/)
+<iframe title="vimeo-player" src="https://player.vimeo.com/video/1153713657?h=2ec1577f58" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>
 
 Let's be honest: the modern hiring process is a black box. You spend hours crafting a resume only to have it rejected by an Applicant Tracking System (ATS) before a human ever sees it. Meanwhile, other platforms want you to spend your time "connecting" and posting "humble brags" instead of actually getting work.
 
@@ -231,7 +230,7 @@ Project Link: [https://github.com/sprusrxeroxx/Jobly](https://github.com/sprusrx
 [license-url]: https://github.com/sprusrxeroxx/Jobly/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/ntokozovilakazi-back-end-developer/
-[product-screenshot]: https://via.placeholder.com/600x400.png?text=Jobly+Dashboard+Placeholder
+[product-screenshot]: https://vimeo.com/1153713657?share=copy&fl=sv&fe=ci
 [Flutter.dev]: https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white
 [Flutter-url]: https://flutter.dev/
 [Firebase.com]: https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white
