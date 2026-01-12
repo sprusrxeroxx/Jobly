@@ -13,7 +13,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/sprusrxeroxx/Jobly">
-    <img src="path/to/your/logo.png" alt="Jobly Logo" width="120" height="120">
+    <img src="jobly Logo.jpg" alt="Jobly Logo" width="200" height="200">
   </a>
 
 <h3 align="center">JOBLY</h3>
@@ -205,7 +205,7 @@ Contributions are what make the open source community such an amazing place to l
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the Apache2.0 License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
