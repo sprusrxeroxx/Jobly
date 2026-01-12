@@ -72,8 +72,6 @@ Jobly is a career arsenal designed to beat the bots at their own game. Using a *
 
 It is a full-stack career platform built for the job seeker who is tired of the status quo.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ### Built With
 
 This project is built using a robust, scalable tech stack designed for performance and real-time capability.
@@ -95,8 +93,6 @@ Jobly is currently in active development. Here is what you can do right now:
 *   **Resume/Job Parsing**: Create a tailored resume based on a PDF or text input.
 *   **Feedback Loop**: Get detailed feedback on *why* your resume isn't a match and exactly *how* to improve it.
 *   **Resume Management**: Save generated versions, delete old drafts, and download the final PDF.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -152,8 +148,6 @@ To get a local copy up and running, follow these steps.
     flutter run
     ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 <!-- USAGE EXAMPLES -->
 ## Usage
 
@@ -185,8 +179,6 @@ We are building the ultimate career suite. Here is what is coming next:
 
 See the [open issues](https://github.com/sprusrxeroxx/Jobly/issues) for a full list of proposed features.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 <!-- CONTRIBUTING -->
 ## Contributing
 
@@ -197,8 +189,6 @@ Contributions are what make the open source community such an amazing place to l
 3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4.  Push to the Branch (`git push origin feature/AmazingFeature`)
 5.  Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- LICENSE -->
 ## License
