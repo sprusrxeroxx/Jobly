@@ -195,8 +195,6 @@ Contributions are what make the open source community such an amazing place to l
 
 Distributed under the Apache2.0 License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 <!-- CONTACT -->
 ## Contact
 
