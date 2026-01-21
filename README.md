@@ -81,7 +81,7 @@ This project is built using a robust, scalable tech stack designed for performan
 * [![Google Gemini][Gemini.google]][Gemini-url] - **AI Core**: Powering the adversarial generation and analysis.
 * [![Node][Node.js]][Node-url] - **Cloud Functions**: Serverless compute for resume processing.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right"><a href="#readme-top">back to top</a></p>
 
 <!-- FEATURES -->
 ## Features
@@ -160,7 +160,7 @@ To get a local copy up and running, follow these steps.
 
 _For more examples, please refer to the [Documentation](https://github.com/sprusrxeroxx/Jobly/wiki)_
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right"><a href="#readme-top">back to top</a></p>
 
 <!-- ROADMAP -->
 ## Roadmap
@@ -202,7 +202,7 @@ Distributed under the Apache2.0 License. See `LICENSE.txt` for more information.
 
 Project Link: [https://github.com/sprusrxeroxx/Jobly](https://github.com/sprusrxeroxx/Jobly)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right"><a href="#readme-top">back to top</a></p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/sprusrxeroxx/Jobly.svg?style=for-the-badge
