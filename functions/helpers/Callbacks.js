@@ -22,10 +22,10 @@ export async function callGeminiApi(systemInstruction, userQuery, structureSchem
     contents: [{ parts: [{ text: userQuery }] }],
     systemInstruction: { parts: [{ text: systemInstruction }] },
     generationConfig: {
-      temperature: 0.1,  // ↓ From 0.3 to 0.1 for strict adherence
+      temperature: 0.1,
       maxOutputTokens: 3000,
-      topP: 0.3,         // ↓ More restrictive
-      topK: 20           // ↓ More deterministic
+      topP: 0.3,
+      topK: 20
     }
   };
   
