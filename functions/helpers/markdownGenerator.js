@@ -1,5 +1,3 @@
-// --- Markdown Template Generator ---
-
 export function generateMarkdownResume(structuredData) {
     const { contact_info, summary, experience, skills, education, projects, certifications, languages } = structuredData;
     
@@ -10,13 +8,13 @@ export function generateMarkdownResume(structuredData) {
         markdown += `# ${contact_info.name}\n\n`;
     }
     
-    if (contact_info.email || contact_info.phone_numbers.length > 0 || contact_info.location) {
+    if (contact_info.email || contact_info.phone_numbers.length > 0) {
         markdown += '**Contact Information**\n';
-        if (contact_info.email) markdown += `- Email: ${contact_info.email}\n`;
+        if (contact_info?.email) markdown += `- Email: ${contact_info.email}\n`;
         if (contact_info.phone_numbers.length > 0) markdown += `- Phone: ${contact_info.phone_numbers[0]}\n`;
-        if (contact_info.location) markdown += `- Location: ${contact_info.location}\n`;
-        if (contact_info.linkedin) markdown += `- LinkedIn: ${contact_info.linkedin}\n`;
-        if (contact_info.portfolio) markdown += `- Portfolio: ${contact_info.portfolio}\n`;
+        if (contact_info?.location) markdown += `- Location: ${contact_info.location}\n`;
+        if (contact_info?.linkedin) markdown += `- LinkedIn: ${contact_info.linkedin}\n`;
+        if (contact_info?.portfolio) markdown += `- Portfolio: ${contact_info.portfolio}\n`;
         markdown += '\n';
     }
     
@@ -32,8 +30,8 @@ export function generateMarkdownResume(structuredData) {
         experience.forEach(exp => {
             markdown += `### ${exp.role}\n`;
             markdown += `**${exp.company_name}**`;
-            if (exp.location) markdown += ` | ${exp.location}`;
-            if (exp.start_date) {
+            if (exp?.location) markdown += ` | ${exp.location}`;
+            if (exp?.start_date) {
                 markdown += ` | ${exp.start_date} - ${exp.end_date || 'Present'}\n`;
             } else {
                 markdown += '\n';
